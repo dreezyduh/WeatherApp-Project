@@ -60,9 +60,9 @@ async function getFromApi() {
     const searchTag = searchInput.value
     console.log(searchInput.value)
     try {
-        const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=2787bc9543fe424eb6b92142240506&q=${searchTag}`);
+        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=2787bc9543fe424eb6b92142240506&q=${searchTag}`);
         responseData = await response.json();
-        const responseForecast = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=2787bc9543fe424eb6b92142240506&days=3&q=${searchTag}`);
+        const responseForecast = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=2787bc9543fe424eb6b92142240506&days=3&q=${searchTag}`);
         forecastData = await responseForecast.json();
         console.log(responseData);
         console.log(forecastData);
