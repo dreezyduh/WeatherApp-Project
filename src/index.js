@@ -273,6 +273,8 @@ function showPerDayData(forecastday) { //forecastData.forecast.forecastday[0]
             precipitation.textContent = `Chance of rain is ${forecastday.day.daily_chance_of_rain}%`
         } else if (forecastday.day.daily_will_it_snow === 1) {
             precipitation.textContent = `Chance of snow is ${forecastday.day.daily_chance_of_snow}%`
+        } else {
+            precipitation.textContent = `No chance of precipitation`;
         }
     }
 
