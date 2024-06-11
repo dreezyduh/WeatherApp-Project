@@ -24,34 +24,43 @@ body {
 
 .dawn {
     background: var(--skyDawn);
+    background-attachment: fixed;
 }
 
 .sunrise {
     background: var(--skySunrise);
+    background-attachment: fixed;
 }
 
 .morning {
     background: var(--skyMorning);
+    background-attachment: fixed;
 }
 
 .afternoon {
     background: var(--skyAfternoon);
+    background-attachment: fixed;
 }
 
 .sunset {
     background: var(--skySunset);
+    background-attachment: fixed;
 }
 
 .dusk {
     background: var(--skyDusk);
+    background-attachment: fixed;
 }
 
 .night {
     background: var(--skyNight);
+    background-attachment: fixed;
 }
 
 .containerWeather {
     display: flex;
+    flex-direction: column;
+    padding: 10px;
     align-items: center;
     justify-content: center;
 }
@@ -85,28 +94,56 @@ label {
     display: flex;
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.308);
-    width: max-content;
+    max-width: max-content;
+    min-width: fit-content;
     margin-left: auto;
     margin-right: auto;
     padding: 20px;
     border-radius: 10px;
 }
 
-body > div > div:nth-child(5) {
+.containerWeatherCondition {
     display: flex;
     gap: 10px;
 
-    img {
+    div:nth-child(3) > img {
         filter: invert(100%) sepia(0%) saturate(7498%) hue-rotate(185deg) brightness(100%) contrast(101%);
     }
 }
 
+
+
 .containerDetails {
-    font-size: 18px;
+    font-size: 20px;
     display: flex;
     gap: 10px;
 }
 
-body > div > div:nth-child(5) > div:nth-child(2) {
+.container > div > div:nth-child(5) > div:nth-child(2) {
     display: flex;
 }
+
+.daysContainer {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 20px;
+}
+
+.dayContainer {
+    background-color: rgba(0, 0, 0, 0.308);
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.avgWeatherContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: min-content;
+}
+
+.tempContainer {
+    display: flex;
+    gap: 10px;
+}
+
