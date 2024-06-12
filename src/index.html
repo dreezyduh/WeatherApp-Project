@@ -9,8 +9,10 @@
     <div class="container">
         <form>
             <label for="search">
-                <input type="text" id="search" placeholder="Search for a city..">
-                <img src="" alt="" class="searchImg">
+                <div class="searchContainer">
+                    <input type="text" id="search" placeholder="Search for a city.." required pattern="[A-Za-z]*">
+                    <input type="image" id="searchimg" class="searchImg">
+                </div>
             </label>
         </form>
     </div>

@@ -57,11 +57,20 @@ body {
     background-attachment: fixed;
 }
 
+.notVisible {
+    display: none;
+}
+
 .containerWeather {
     display: flex;
     flex-direction: column;
     padding: 10px;
     align-items: center;
+    justify-content: center;
+}
+
+select {
+    display: flex;
     justify-content: center;
 }
 
@@ -76,6 +85,10 @@ body {
     cursor: pointer;
 }
 
+.containerUnits > span.inactive {
+    opacity: 30%;
+}
+
 label > img:hover {
     cursor: pointer;
 }
@@ -86,6 +99,12 @@ label > img:hover {
 
 label {
     margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.searchContainer {
     display: flex;
     justify-content: center;
 }
@@ -148,3 +167,26 @@ label {
     gap: 10px;
 }
 
+.containerMessage {
+    font-size: 30px;
+    font-weight: 800;
+    text-align: center;
+    padding: 20px;
+}
+
+.searchListContainer {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(2, minmax(min-content, 30%));
+    gap: 40px;
+    font-size: 30px;
+    padding: 20px;
+
+}
+
+.cityContainer {
+    background-color: rgba(0, 0, 0, 0.432);
+    border-radius: 5px;
+    padding: 20px;
+    overflow: clip
+}
