@@ -10,7 +10,7 @@
         <form>
             <label for="search">
                 <div class="searchContainer">
-                    <input type="text" id="search" placeholder="Search for a city.." required pattern="[A-Za-z]*">
+                    <input type="text" id="search" placeholder="Search for a city.." minlength="1" required pattern="[A-Za-z][A-Za-z\W]*">
                     <input type="image" id="searchimg" class="searchImg">
                 </div>
             </label>

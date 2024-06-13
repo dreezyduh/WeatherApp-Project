@@ -93,9 +93,6 @@ function createOptionsForDataList(list) {
 
 async function getIdFromSearch() {
   const searchTag = searchInput.value;
-  console.log(searchInput.value);
-  if (searchTag.length < 1) return;
-  console.log(searchTag.length);
   try {
     const searchQ = await fetch(
       `https://api.weatherapi.com/v1/search.json?key=2787bc9543fe424eb6b92142240506&days=3&q=${searchTag}`
@@ -104,6 +101,7 @@ async function getIdFromSearch() {
     console.log(searchList);
     console.log(searchList.length);
     if (searchList.length < 1) {
+      alert('No results, try something else');
       return;
     } else if (searchList.length > 1) {
       createOptionsForDataList(searchList);
@@ -145,67 +143,37 @@ function setBackgroundByTime() {
   // moonrise > sunrise > sunset > moonset
   if (!forecastData.forecast) return;
   const phase = forecastData.forecast.forecastday[0].astro;
-  const time = forecastData.current.last_updated
-    .split(' ')[1]
-    .split(':')
-    .join('');
+  const time = Date.parse(forecastData.location.localtime);
   console.log(phase);
   console.log(time);
-  getDateFromEpoch(forecastData.location.localtime_epoch);
-  // Set background to Dawn
-  if (
-    time <= phase.sunrise.split(' ')[0].split(':').join('') &&
-    time >= '0500'
-  ) {
-    document.body.setAttribute('class', 'dawn');
-    // Set background to Sunrise
-  } else if (
-    time <= '0800' &&
-    time >= phase.sunrise.split(' ')[0].split(':').join('')
-  ) {
-    document.body.setAttribute('class', 'sunrise');
-    // Set background to Morning
-  } else if (time <= '1200' && time >= '0800') {
-    document.body.setAttribute('class', 'morning');
-    // Set background to Afernoon
-  } else if (
-    time <= from12To24(phase.sunset.split(' ')[0].split(':').join('')) &&
-    time >= '1200'
-  ) {
-    document.body.setAttribute('class', 'afternoon');
-    // Set background to Sunset
-  } else if (
-    time <= from12To24(phase.moonset.split(' ')[0].split(':').join('')) &&
-    time >= from12To24(phase.sunset.split(' ')[0].split(':').join(''))
-  ) {
-    document.body.setAttribute('class', 'sunset');
-    // Set background to Dusk
-  } else if (
-    time <= '2200' &&
-    time >=
-      add30Mins(
-        from12To24(phase.sunset.split(' ')[0].split(':').join('')),
-        '0030'
-      )
-  ) {
-    document.body.setAttribute('class', 'dusk');
+  console.log(new Date(time));
+  // Substract 30 minutes from sunrise time in order to have night time until dawn
+  if (time <= getPhaseTime(phase.sunrise) - 30 * 60 * 1000) {
     // Set background to Night
-  } else if (time >= '2200') {
+    document.body.setAttribute('class', 'night');
+  } else if (time <= getPhaseTime(phase.sunrise)) {
+    // Set background to Dawn
+    document.body.setAttribute('class', 'dawn');
+  } else if (time <= getPhaseTime('08:00 AM')) {
+    // Set background to Sunrise
+    document.body.setAttribute('class', 'sunrise');
+  } else if (time <= getPhaseTime('12:00 PM')) {
+    //Set background to Morning
+    document.body.setAttribute('class', 'morning');
+  } else if (time <= getPhaseTime(phase.sunset)) {
+    // Set background to Afernoon
+    document.body.setAttribute('class', 'afternoon');
+    // Add 30 minutes from sunset in order to have sunset until dusk
+  } else if (time <= getPhaseTime(phase.sunset) + 30 * 60 * 1000) {
+    // Set background to Sunset
+    document.body.setAttribute('class', 'sunset');
+  } else if (time <= getPhaseTime('10:00 PM')) {
+    // Set background to Dusk
+    document.body.setAttribute('class', 'dusk');
+  } else if (time <= getPhaseTime('11:59:59 PM')) {
+    // Set background to Night
     document.body.setAttribute('class', 'night');
   }
-}
-
-function from12To24(string) {
-  return String(Number(string) + 1200);
-}
-
-function add30Mins(string1, string2) {
-  let transfer = String(Number(string1) + Number(string2));
-  if (transfer.at(-2) >= 6) {
-    transfer = (Number(string2) - Number(string1)) * -1 + 100;
-  }
-  console.log(transfer);
-  return String(transfer);
 }
 
 function displayInfo(data) {
@@ -372,3 +340,14 @@ function getDateFromEpoch(epoch) {
   console.log(dateTime);
   return dateTime;
 }
+
+function getPhaseTime(phase) {
+  const newPhase = Date.parse(
+    `${forecastData.forecast.forecastday[0].date} ${phase}`
+  );
+  console.log(newPhase);
+  console.log(new Date(newPhase));
+  return newPhase;
+}
+
+// dawn = sunrise - 30 mins < sunrise < afternoon 12:00 < sunset < dusk = sunset + 30 mins < night 22:00
