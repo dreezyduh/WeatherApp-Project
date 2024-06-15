@@ -76,7 +76,6 @@ function createOptionsForDataList(list) {
   containerMessage.textContent =
     'Multiple cities found, please click on the desired one';
   for (const index in list) {
-    console.log(list[index]);
     const cityContainer = document.createElement('div');
     cityContainer.setAttribute('class', 'cityContainer');
 
@@ -85,7 +84,6 @@ function createOptionsForDataList(list) {
     searchListContainer.appendChild(cityContainer);
 
     cityContainer.addEventListener('click', function (e) {
-      console.log(list[index].id);
       getFromApi(list[index].id);
     });
   }
@@ -98,20 +96,15 @@ async function getIdFromSearch() {
       `https://api.weatherapi.com/v1/search.json?key=2787bc9543fe424eb6b92142240506&days=3&q=${searchTag}`
     );
     const searchList = await searchQ.json();
-    console.log(searchList);
-    console.log(searchList.length);
     if (searchList.length < 1) {
       alert('No results, try something else');
       return;
     } else if (searchList.length > 1) {
       createOptionsForDataList(searchList);
     } else {
-      console.log('doar una');
       getFromApi(searchList[0].id);
     }
-  } catch (error) {
-    console.error('Eroare: ' + error);
-  }
+  } catch (error) {}
 }
 
 async function getFromApi(id) {
@@ -120,10 +113,8 @@ async function getFromApi(id) {
       `https://api.weatherapi.com/v1/forecast.json?key=2787bc9543fe424eb6b92142240506&days=3&q=id:${id}`
     );
     const responseData = await responseForecast.json();
-    console.log(responseData);
 
     if (responseData.error) {
-      console.log(responseData.error.message);
       if (responseData.error.code !== 1003) {
         alert(responseData.error.message);
       }
@@ -134,19 +125,15 @@ async function getFromApi(id) {
       displayInfo(forecastData);
       removeFromParent(listContainer);
     }
-  } catch (error) {
-    console.error('Eroare: ' + error);
-  }
+  } catch (error) {}
 }
 
 function setBackgroundByTime() {
+  // dawn = sunrise - 30 mins < sunrise < afternoon 12:00 < sunset < dusk = sunset + 30 mins < night 22:00
   // moonrise > sunrise > sunset > moonset
   if (!forecastData.forecast) return;
   const phase = forecastData.forecast.forecastday[0].astro;
   const time = Date.parse(forecastData.location.localtime);
-  console.log(phase);
-  console.log(time);
-  console.log(new Date(time));
   // Substract 30 minutes from sunrise time in order to have night time until dawn
   if (time <= getPhaseTime(phase.sunrise) - 30 * 60 * 1000) {
     // Set background to Night
@@ -314,6 +301,11 @@ function showPerDayData(forecastday) {
   tempContainer.appendChild(maxTemp);
   tempContainer.appendChild(minTemp);
 
+  dayContainer.addEventListener('click', function (e) {
+    e.preventDefault();
+    dataForThisDay(forecastday);
+  });
+
   function checkPrecipitation() {
     if (forecastday.day.daily_will_it_rain === 1) {
       precipitation.textContent = `Chance of rain is ${forecastday.day.daily_chance_of_rain}%`;
@@ -335,19 +327,48 @@ function showPerDayData(forecastday) {
   checkPrecipitation();
 }
 
-function getDateFromEpoch(epoch) {
-  const dateTime = new Date(epoch * 1000);
-  console.log(dateTime);
-  return dateTime;
-}
-
 function getPhaseTime(phase) {
   const newPhase = Date.parse(
     `${forecastData.forecast.forecastday[0].date} ${phase}`
   );
-  console.log(newPhase);
-  console.log(new Date(newPhase));
   return newPhase;
 }
 
-// dawn = sunrise - 30 mins < sunrise < afternoon 12:00 < sunset < dusk = sunset + 30 mins < night 22:00
+function dataForThisDay(day) {
+  const hourlyContainer = document.createElement('div');
+
+  hourlyContainer.setAttribute('class', 'hourlyContainer');
+
+  document.body.appendChild(hourlyContainer);
+
+  hourlyContainer.addEventListener('click', function () {
+    document.body.removeChild(hourlyContainer);
+  });
+
+  for (const hour in day.hour) {
+    const units = {
+      temp: [day.hour[hour].temp_c, day.hour[hour].temp_f],
+    };
+    const hourlyData = document.createElement('div');
+    const time = document.createElement('div');
+    const weatherContainer = document.createElement('div');
+    const weatherCondition = document.createElement('div');
+    const weatherIcon = document.createElement('img');
+    const temperature = document.createElement('div');
+
+    time.textContent = day.hour[hour].time.split(' ')[1];
+    weatherCondition.textContent = day.hour[hour].condition.text;
+    temperature.textContent = `${units.temp[regionUnits]}°`;
+
+    weatherIcon.src = day.hour[hour].condition.icon;
+
+    hourlyContainer.appendChild(hourlyData);
+
+    hourlyData.appendChild(time);
+    hourlyData.appendChild(weatherContainer);
+    hourlyData.appendChild(temperature);
+
+    weatherContainer.appendChild(weatherCondition);
+    weatherContainer.appendChild(weatherIcon);
+  }
+}
